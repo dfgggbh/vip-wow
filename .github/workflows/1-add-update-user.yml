@@ -23,7 +23,7 @@ on:
         description: 'Select the config type'
         required: true
         type: choice
-        options: [xray-wow, clash, warp, warp-json, warp2.json,j sing-box-hiddify.json, sing-box]
+        options: [xray-wow, clash, warp, warp-json, warp2.json, sing-box-hiddify.json, sing-box]
         default: 'xray-wow'
 
 jobs:
