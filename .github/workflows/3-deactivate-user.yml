@@ -1,0 +1,28 @@
+# .github/workflows/3-deactivate-user.yml
+name: '❌ 3. Deactivate User'
+
+on:
+  workflow_dispatch:
+    inputs:
+      user_id:
+        description: 'The ID of the user to deactivate. This is reversible by adding/updating them again.'
+        required: true
+
+jobs:
+  run-tool:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - name: Install Dependencies
+        run: pip install requests pyotp
+      - name: ⛔ Run The Power Tool
+        env:
+          WORKER_URL: ${{ secrets.WORKER_URL }}
+          TOTP_SECRET_KEY: ${{ secrets.TOTP_SECRET_KEY }}
+          ACTION: 'deactivate'
+          USER_ID: ${{ github.event.inputs.user_id }}
+        run: python power_tool.py
