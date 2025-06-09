@@ -1,0 +1,56 @@
+# filename: .github/workflows/add-update-user.yml
+name: '✅ 1. Add or Renew User'
+
+on:
+  workflow_dispatch:
+    inputs:
+      user_id:
+        description: 'User ID (e.g., client-ali). No spaces or special chars.'
+        required: true
+      user_name:
+        description: 'Full Name (optional, will be shown in client apps)'
+        required: false
+      expire_days:
+        description: 'Subscription validity in days (e.g., 30)'
+        required: true
+        default: '30'
+      data_limit_gb:
+        description: 'Data limit in GB (use 0 for unlimited)'
+        required: true
+        default: '50'
+      config_source:
+        description: 'Select the config type for the user'
+        required: true
+        type: choice
+        options:
+          - hiddify-auto
+          - warp
+          - warp-json
+          - warp2.json
+          - v2rayng-vless
+          - sing-box
+          - clash-meta
+        default: 'hiddify-auto'
+
+jobs:
+  manage-user:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - name: Install Dependencies
+        run: pip install requests pyotp
+      - name: 🚀 Run The Power Tool
+        env:
+          WORKER_URL: ${{ secrets.WORKER_URL }}
+          TOTP_SECRET_KEY: ${{ secrets.TOTP_SECRET_KEY }}
+          ACTION: 'add_or_update'
+          USER_ID: ${{ github.event.inputs.user_id }}
+          USER_NAME: ${{ github.event.inputs.user_name }}
+          EXPIRE_DAYS: ${{ github.event.inputs.expire_days }}
+          DATA_LIMIT_GB: ${{ github.event.inputs.data_limit_gb }}
+          CONFIG_SOURCE: ${{ github.event.inputs.config_source }}
+        run: python power_tool.py
